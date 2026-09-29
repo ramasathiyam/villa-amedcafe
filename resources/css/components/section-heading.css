@@ -1,0 +1,20 @@
+.section-heading {
+  font-family: var(--font-serif);
+  color: var(--color-text-heading);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+}
+
+.section-heading-center {
+  text-align: center;
+}
+
+.section-heading-left {
+  text-align: left;
+}
+
+.section-heading-normal-case {
+  text-transform: none;
+  letter-spacing: normal;
+}

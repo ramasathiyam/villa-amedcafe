@@ -1,0 +1,27 @@
+/* The "— DISCOVER MORE" text-link pattern: a short horizontal rule followed by an
+   uppercase letter-spaced label. No underline, no box, no arrow icon. */
+.rule-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.rule-link-bar {
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+}
+
+.rule-link-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

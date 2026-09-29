@@ -1,0 +1,182 @@
+/*
+  Shared header shell, ported from the Next.js reference's Navbar component — same three
+  rows (utility row, centered logo, nav links) and same Dining dropdown/mobile-menu
+  behavior. Overlaid transparently on top of each page's Hero image (matches the
+  reference exactly, per explicit follow-up request): position:absolute, transparent
+  background, white text/logo relying on the Hero's own dark gradient overlay
+  (.hero-overlay) for legibility. Not position:fixed — it scrolls away with the page,
+  it just doesn't occupy layout space above the hero.
+*/
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: transparent;
+  color: var(--color-white);
+}
+
+.navbar-utility-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--space-2) var(--container-padding) 0;
+}
+
+.navbar-contact-icons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-small);
+}
+
+.navbar-utility-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.navbar-logo-row {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-2) var(--container-padding);
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-logo-image {
+  width: 140px;
+  height: auto;
+}
+
+.navbar-nav-row {
+  display: none;
+  justify-content: center;
+  padding-bottom: var(--space-3);
+}
+
+.navbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.navbar-links a,
+.navbar-link-disabled {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.navbar-link-disabled {
+  color: inherit;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.navbar-mobile-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 28px;
+  height: 22px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+.navbar-mobile-toggle-bar {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+}
+
+/* ---- Dining dropdown (desktop) — hover + click, state driven by app.js ---- */
+.navbar-item-with-children {
+  position: relative;
+}
+
+.navbar-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.navbar-caret {
+  font-size: 9px;
+  line-height: 1;
+}
+
+.navbar-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: var(--space-3);
+  min-width: 210px;
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 150ms ease;
+}
+
+.navbar-dropdown ul {
+  background: #000000;
+  padding: var(--space-2) 0;
+  list-style: none;
+  border: var(--border-width) solid rgba(255, 255, 255, 0.12);
+}
+
+.navbar-item-with-children[data-open="true"] .navbar-dropdown,
+.navbar-item-with-children:focus-within .navbar-dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.navbar-dropdown a {
+  display: block;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 150ms ease;
+}
+
+.navbar-dropdown a:hover,
+.navbar-dropdown a:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 1024px) {
+  .navbar-nav-row {
+    display: flex;
+  }
+
+  .navbar-mobile-toggle {
+    display: none;
+  }
+}

@@ -1,0 +1,14 @@
+.intro-section {
+  max-width: 680px;
+  margin-inline: auto;
+  padding: var(--space-8) var(--container-padding) var(--space-6);
+  text-align: center;
+}
+
+.intro-section-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}

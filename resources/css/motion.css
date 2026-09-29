@@ -1,0 +1,79 @@
+/*
+  Scroll-reveal system — vanilla-JS port of the Next.js reference's Reveal/RevealGroup/
+  RevealItem components (see resources/js/app.js for the IntersectionObserver logic).
+
+  Base state = fully visible, no transform — this is what the markup shows before JS
+  runs (or if JS is disabled/blocked), matching the reference's "never stuck invisible"
+  guarantee. Only [data-armed="true"] (set by app.js once an element is confirmed
+  off-screen at load) switches to the hidden pre-reveal state; [data-visible="true"]
+  then animates it back to this same base state.
+*/
+
+[data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* "image" variant renders as an inset wrapper matching a fill-positioned image — it must
+   sit inside an existing `position: relative` image container. */
+[data-reveal="image"] {
+  position: absolute;
+  inset: 0;
+}
+
+[data-reveal][data-armed="true"] {
+  opacity: 0;
+  transition:
+    opacity var(--motion-duration) var(--motion-easing),
+    transform var(--motion-duration) var(--motion-easing);
+}
+
+[data-reveal="fade-up"][data-armed="true"] {
+  transform: translateY(var(--motion-distance));
+}
+
+/* Opacity-only variant — no translateY at all (e.g. Footer). */
+[data-reveal="fade"][data-armed="true"] {
+  transform: none;
+}
+
+[data-reveal="image"][data-armed="true"] {
+  transform: scale(1.03);
+  transition-duration: var(--motion-duration-image);
+}
+
+[data-reveal][data-armed="true"][data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Grouped/staggered reveal (card grids, galleries, testimonials) ---- */
+[data-reveal-item] {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-reveal-group][data-armed="true"] [data-reveal-item] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance));
+  transition:
+    opacity var(--motion-duration) var(--motion-easing),
+    transform var(--motion-duration) var(--motion-easing);
+  /* --stagger-i is set inline per item (0, 1, 2, ...), capped at 6. */
+  transition-delay: calc(var(--stagger-i, 0) * var(--motion-stagger-step));
+}
+
+[data-reveal-group][data-armed="true"][data-visible="true"] [data-reveal-item] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal][data-armed="true"],
+  [data-reveal-group][data-armed="true"] [data-reveal-item] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

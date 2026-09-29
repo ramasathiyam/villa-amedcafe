@@ -1,0 +1,641 @@
+/* One-off, page-specific overrides that aren't worth a shared component — ported from the
+   Next.js reference's per-page page.module.css files. */
+
+/* Home: widens just the Halloween promo banner's paragraph so it wraps to fewer, longer
+   lines instead of three short ones. */
+.home-halloween-copy {
+  max-width: 520px;
+}
+
+/* Vertical gap BETWEEN stacked event banners only — no margin/padding of its own, so a
+   single event (or zero, guarded at the call site) looks exactly as before. Same
+   mobile-to-desktop escalation as .room-grid's gap (--space-5 -> --space-6 at 1024px). */
+.events-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .events-stack {
+    gap: var(--space-6);
+  }
+}
+
+/* Room: Family Room + Hotel Information composite. */
+.room-family {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  margin-bottom: var(--space-7);
+  border: var(--border-width) solid var(--color-rule);
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .room-family {
+    grid-template-columns: 1.1fr 0.7fr 1.3fr;
+  }
+}
+
+.room-family-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 320px;
+}
+
+.room-family-label {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-text-heading);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--text-body);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+  padding: var(--space-2) var(--space-3);
+  text-decoration: none;
+}
+
+.room-family-badge {
+  position: absolute;
+  bottom: var(--space-3);
+  left: var(--space-3);
+  z-index: 1;
+  /* Matches .room-family-book's touch-target height so both sit on one visual line —
+     the badge's own padding alone (inherited from .price-badge) isn't tall enough. */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* BOOK overlay, bottom-right of the Family Room photo — mirrors .room-family-badge's
+   offset and horizontal padding (var(--space-3), from .price-badge) on the opposite
+   corner, so both read as one row. .room-family-badge has no border-radius override
+   (inherits .price-badge's var(--radius), which is 0 sitewide), so this matches that. */
+.room-family-book {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  z-index: 1;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  background: var(--color-accent-tan);
+  color: var(--color-text-heading);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.room-family-book:hover,
+.room-family-book:focus-visible {
+  background: var(--color-accent-tan-dark);
+}
+
+.room-family-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-family-detail-col {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+
+.room-family-detail-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 160px;
+}
+
+.room-family-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-family-info {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.room-family-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.room-family-meta-item {
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+}
+
+.room-family-footer {
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* The three booking tiles reuse .room-card-ota-button's gold-tile style but need their
+   own row width here (unlike room-card, .room-family-footer has no fixed card width to
+   fill) so they get a real size instead of shrinking to content. */
+.room-family-ota-row {
+  display: flex;
+  gap: var(--space-2);
+  flex: 1 1 280px;
+  min-width: 240px;
+}
+
+.room-grid {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: 0 var(--container-padding) var(--space-7);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .room-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .room-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+}
+
+/* Room Detail: showcase card (photo / info / price), three columns on desktop, stacked
+   on mobile — same cream panel treatment as Barak's cocktails carousel above. */
+.room-detail-showcase {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-7);
+  padding: var(--space-5);
+  background: var(--color-cream);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .room-detail-showcase {
+    grid-template-columns: 1fr 1.6fr 1fr;
+    align-items: center;
+  }
+}
+
+.room-detail-showcase-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 240px;
+}
+
+.room-detail-showcase-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-detail-showcase-name {
+  font-size: var(--text-h2);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+  color: var(--color-text-heading);
+}
+
+.room-detail-showcase-meta {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.room-detail-showcase-meta-item {
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+}
+
+.room-detail-more {
+  margin-top: var(--space-3);
+}
+
+.room-detail-more-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-heading);
+  cursor: pointer;
+  list-style: none;
+}
+
+.room-detail-more-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.room-detail-more-body {
+  margin-top: var(--space-3);
+  color: var(--color-text-body);
+  font-size: var(--text-small);
+  line-height: var(--line-height-body);
+  max-width: 60ch;
+}
+
+.room-detail-showcase-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+@media (min-width: 1024px) {
+  .room-detail-showcase-price {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+.room-detail-price-label {
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+}
+
+.room-detail-price-amount {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--color-text-heading);
+}
+
+.room-detail-price-amount span {
+  font-size: var(--text-small);
+  font-weight: 400;
+}
+
+.room-detail-price-unit {
+  font-size: var(--text-label);
+  color: var(--color-text-body);
+  margin-bottom: var(--space-2);
+}
+
+.room-detail-availability {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-accent-tan-dark);
+  margin-bottom: var(--space-2);
+}
+
+.room-detail-availability-none {
+  color: var(--color-error);
+}
+
+/* Room Detail: rate plan rows, below the showcase card. */
+.room-rate-plans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.room-rate-plan-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  align-items: center;
+  border: var(--border-width) solid var(--color-rule);
+  padding: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .room-rate-plan-row {
+    grid-template-columns: 0.7fr 1.6fr 0.9fr 1fr;
+    gap: var(--space-3);
+  }
+}
+
+.room-rate-plan-guests {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+}
+
+.room-rate-plan-guest-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.room-rate-plan-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--color-text-heading);
+}
+
+.room-rate-plan-info {
+  position: relative;
+}
+
+.room-rate-plan-info summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-rule);
+  border-radius: 50%;
+  font-size: var(--text-label);
+  font-style: italic;
+  font-family: serif;
+  color: var(--color-text-body);
+  cursor: pointer;
+  list-style: none;
+}
+
+.room-rate-plan-info summary::-webkit-details-marker {
+  display: none;
+}
+
+.room-rate-plan-info-body {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: 1;
+  width: max-content;
+  max-width: 280px;
+  background: var(--color-white);
+  border: var(--border-width) solid var(--color-rule);
+  padding: var(--space-3);
+  font-size: var(--text-small);
+  font-weight: 400;
+  color: var(--color-text-body);
+}
+
+.room-rate-plan-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .room-rate-plan-price {
+    justify-content: flex-end;
+  }
+}
+
+.room-rate-plan-price-compare {
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+  text-decoration: line-through;
+}
+
+.room-rate-plan-price-current {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--text-h2);
+  color: var(--color-text-heading);
+}
+
+.room-rate-plan-price-unit {
+  flex-basis: 100%;
+  font-size: var(--text-label);
+  color: var(--color-text-body);
+  text-align: right;
+}
+
+.room-rate-plan-book {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.room-rate-plan-book select {
+  min-height: 42px;
+}
+
+/* Room Detail: two-column layout below the showcase card — rate plans left, Booking
+   Summary sticky on the right at desktop; single column (summary after plans) below
+   1024px, achieved by plain DOM order rather than any grid re-ordering. */
+.room-detail-layout {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  margin-bottom: var(--space-7);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* Booking Feature Flag off: no Booking Summary column at all, so the rate plans use the
+   full content width instead of leaving an empty sidebar gap — and each row drops back to
+   3 columns (no unit-selector/Book Now column) rather than a permanently-empty 4th.
+   Combined-class selectors (not just .room-detail-layout-solo alone) so this reliably
+   wins over .room-detail-layout's own 1024px rule regardless of source order — the exact
+   cascade-specificity mistake this project has been bitten by before. */
+.room-detail-layout-solo {
+  max-width: var(--container-max);
+}
+
+@media (min-width: 768px) {
+  .room-rate-plan-row.room-rate-plan-row-solo {
+    grid-template-columns: 0.9fr 2fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .room-detail-layout {
+    grid-template-columns: 1.8fr 1fr;
+  }
+
+  .room-detail-layout.room-detail-layout-solo {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-summary {
+    position: sticky;
+    top: var(--space-4);
+  }
+}
+
+.booking-summary {
+  border: var(--border-width) solid var(--color-rule);
+  padding: var(--space-4);
+  background: var(--color-cream);
+}
+
+.booking-summary-heading {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--text-h2);
+  color: var(--color-text-heading);
+  margin-bottom: var(--space-3);
+}
+
+.booking-summary-empty {
+  color: var(--color-text-body);
+  font-size: var(--text-small);
+}
+
+.booking-summary-notice {
+  background: var(--color-white);
+  border: var(--border-width) solid var(--color-rule);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+}
+
+.booking-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-width) solid var(--color-rule);
+}
+
+.booking-summary-row-info p {
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+}
+
+.booking-summary-row-name {
+  font-weight: 700;
+  color: var(--color-text-heading) !important;
+}
+
+.booking-summary-row-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  font-weight: 700;
+  color: var(--color-text-heading);
+  flex-shrink: 0;
+}
+
+.booking-summary-remove {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-rule);
+  background: var(--color-white);
+  color: var(--color-text-heading);
+  cursor: pointer;
+  line-height: 1;
+  font-size: var(--text-small);
+}
+
+.booking-summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--text-h2);
+  color: var(--color-text-heading);
+}
+
+.booking-summary-checkout {
+  width: 100%;
+  text-align: center;
+  margin-top: var(--space-2);
+}
+
+.room-detail-flash-wrap {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  margin-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.room-detail-flash {
+  padding: var(--space-3);
+  font-size: var(--text-small);
+  border: var(--border-width) solid var(--color-rule);
+}
+
+.room-detail-flash-status {
+  color: var(--color-text-heading);
+  border-color: var(--color-accent-tan-dark);
+}
+
+.room-detail-flash-error {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+/* Barak Rooftop and Bar: Signature Cocktails row — carousel on a cream panel beside a
+   candid photo, side by side on desktop/tablet, stacked on mobile. */
+.barak-cocktails-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-bottom: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .barak-cocktails-row {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+}
+
+.barak-cocktails-carousel {
+  background: var(--color-cream);
+  display: flex;
+  align-items: center;
+}
+
+.barak-cocktails-carousel > * {
+  width: 100%;
+}
+
+.barak-cocktails-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+}
+
+@media (min-width: 1024px) {
+  .barak-cocktails-photo {
+    min-height: 0;
+  }
+}
+
+.barak-cocktails-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

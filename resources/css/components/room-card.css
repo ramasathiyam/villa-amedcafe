@@ -1,0 +1,141 @@
+/* Rounded corners here are a deliberate, scoped exception to the site's sharp-corner rule
+   (matches the reference screenshot exactly for this card). --card-radius is local to
+   this component only — the shared --radius token stays 0 everywhere else. */
+.room-card {
+  --card-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.room-card-image-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: repeating-linear-gradient(45deg, #e9e4d8, #e9e4d8 10px, #ddd6c4 10px, #ddd6c4 20px);
+}
+
+.room-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-card-badge {
+  position: absolute;
+  bottom: var(--space-2);
+  left: var(--space-2);
+  border-radius: 8px;
+  /* Matches .room-card-book's touch-target height so both sit on one visual line —
+     the badge's own padding alone (inherited from .price-badge) isn't tall enough. */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* BOOK overlay, bottom-right of the room photo — mirrors .room-card-badge's offset,
+   border radius and horizontal padding (var(--space-3), from .price-badge) on the
+   opposite corner, so both read as one row. */
+.room-card-book {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  z-index: 1;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  border-radius: 8px;
+  background: var(--color-accent-tan);
+  color: var(--color-text-heading);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.room-card-book:hover,
+.room-card-book:focus-visible {
+  background: var(--color-accent-tan-dark);
+}
+
+.room-card-body {
+  flex: 1;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.room-card-name {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.room-card-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Shared with the Family Room composite (room/index.blade.php) — "N guests need at least
+   M rooms", shown only when the requested guest count exceeds this room's per-unit max. */
+.room-card-capacity-hint {
+  font-size: var(--text-label);
+  color: var(--color-error);
+}
+
+.room-card-meta {
+  font-size: var(--text-small);
+  color: var(--color-text-body);
+}
+
+.room-card-ota-row {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--space-3) var(--space-3);
+}
+
+.room-card-ota-button {
+  flex: 1;
+  position: relative;
+  height: 56px;
+  min-width: 0;
+  background: var(--color-accent-tan);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.room-card-ota-button:hover,
+.room-card-ota-button:focus-visible {
+  background: var(--color-accent-tan-dark);
+}
+
+.room-card-ota-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  padding: var(--space-2);
+}
+
+.room-card-ota-text {
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-heading);
+  color: var(--color-text-heading);
+  padding: 0 var(--space-2);
+  text-align: center;
+}

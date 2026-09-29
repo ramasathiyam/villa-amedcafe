@@ -1,0 +1,103 @@
+.activity-showcase {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--space-7) var(--container-padding);
+}
+
+.activity-showcase-heading-wrap {
+  margin-bottom: var(--space-5);
+}
+
+.activity-showcase-heading {
+  font-family: var(--font-sans);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  color: var(--color-text-heading);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.activity-showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.activity-showcase-main {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: flex-end;
+}
+
+.activity-showcase-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.activity-showcase-main-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--overlay-dark-strong), transparent 60%);
+}
+
+.activity-showcase-main-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: var(--space-4);
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.activity-showcase-main-caption {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.activity-showcase-main-heading {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-h1);
+  color: var(--color-white);
+  line-height: var(--line-height-heading);
+}
+
+.activity-showcase-collage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.activity-showcase-collage-tile {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.activity-showcase-collage-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 900px) {
+  .activity-showcase-grid {
+    grid-template-columns: 1.7fr 1fr;
+    align-items: stretch;
+  }
+
+  .activity-showcase-main {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+}

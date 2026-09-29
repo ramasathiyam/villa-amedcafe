@@ -1,0 +1,187 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-text-heading);
+}
+
+@supports (min-height: 100dvh) {
+  .hero {
+    min-height: 100dvh;
+  }
+}
+
+.hero-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: hero-image-in var(--motion-duration-image) var(--motion-easing) both;
+}
+
+@keyframes hero-image-in {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.hero-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(45deg, #3a3733, #3a3733 10px, #322f2b 10px, #322f2b 20px);
+  color: var(--color-white);
+  font-size: var(--text-small);
+  text-align: center;
+  padding: var(--space-3);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to bottom, var(--overlay-dark-soft), var(--overlay-dark-strong));
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--color-white);
+  padding: var(--space-6) var(--container-padding);
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  animation: hero-content-in var(--motion-duration) var(--motion-easing) both;
+}
+
+@keyframes hero-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content,
+  .hero-image {
+    animation: none;
+  }
+}
+
+.hero-content-left {
+  align-items: flex-start;
+}
+
+.hero-title {
+  font-size: var(--text-hero);
+  letter-spacing: var(--tracking-hero);
+  text-transform: uppercase;
+  color: var(--color-white);
+  white-space: pre-line;
+}
+
+.hero-title-left {
+  text-align: left;
+}
+
+.hero-subtitle {
+  margin-top: var(--space-3);
+  font-family: var(--font-serif);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  font-size: var(--text-small);
+}
+
+/* Multi-image variant (Room Detail hero): images stack absolutely and crossfade via
+   .is-active instead of the single static .hero-image above — same box, same proportions,
+   just swappable. Arrows/dots only render server-side (hero-slider.blade.php) when there
+   are 2+ images, so this CSS never has to hide itself for the 1-image case. */
+.hero-slider-image {
+  opacity: 0;
+  transition: opacity var(--motion-duration) var(--motion-easing);
+  animation: none;
+}
+
+.hero-slider-image.is-active {
+  opacity: 1;
+}
+
+.hero-slider-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--color-white);
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hero-slider-arrow-prev {
+  left: var(--space-3);
+}
+
+.hero-slider-arrow-next {
+  right: var(--space-3);
+}
+
+.hero-slider-dots {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  gap: var(--space-2);
+}
+
+.hero-slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.hero-slider-dot.is-active {
+  background: var(--color-white);
+}
+
+.hero-subtitle-statement {
+  align-self: center;
+  font-family: var(--font-sans);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: var(--text-body);
+  line-height: var(--line-height-body);
+  max-width: 640px;
+  margin-top: var(--space-6);
+}

@@ -1,0 +1,1279 @@
+/*
+  Admin area stylesheet — deliberately separate from resources/css/app.css (the public
+  site bundle). Imports the shared spacing/type-scale primitives from tokens.css (numeric
+  scales, not brand color), but defines its OWN color palette below: Admin is an internal
+  CMS tool with its own design system, not a reskin of the public marketing site.
+
+  ROOT CAUSE FIXED IN THIS REVISION: .admin-input/.admin-label used to default to a
+  dark-theme style (translucent white, meant only for the login screen's dark card) and
+  relied on two override selectors (.admin-form-wide, .admin-form) to flip them light for
+  every other (light-background) usage. Any input/label outside those two exact wrapper
+  classes — the upload forms' file input, the read-only Name/Slug identity block — fell
+  through to the dark defaults and rendered as barely-visible white-on-cream text. Inputs/
+  labels are now LIGHT by default (correct almost everywhere); the login screen's dark
+  card is the one exception, scoped explicitly under .admin-auth-card.
+*/
+@import "./tokens.css";
+
+:root {
+  /* ---- Admin color system ---- */
+  --admin-bg: #f7f5f0;
+  --admin-surface: #ffffff;
+  --admin-text: #262421;
+  --admin-text-secondary: #6e6b66;
+  --admin-text-muted: #8a867f;
+  --admin-border: #d8d3c9;
+  --admin-border-strong: #c3bcae;
+  --admin-dark: #111111;
+  --admin-dark-surface: #1c1b19;
+  --admin-accent: #b9a06a;
+  --admin-accent-dark: #a38a54;
+  --admin-accent-light: #f1e9da;
+  --admin-danger: #b94a48;
+  --admin-danger-light: #f7eceb;
+  --admin-success: #4f7657;
+  --admin-success-light: #edf3ee;
+  --admin-warning: #a97832;
+  --admin-warning-light: #f8efe2;
+  --admin-focus-ring: #8a7248;
+
+  /* ---- Admin type scale (fixed UI sizes, not the public site's fluid clamp() scale) --- */
+  --admin-text-title: 1.75rem;
+  --admin-text-section: 1.125rem;
+  --admin-text-stat: 1.75rem;
+  --admin-text-body: 0.9375rem;
+  --admin-text-table: 0.8125rem;
+  --admin-text-label: 0.6875rem;
+  --admin-text-helper: 0.75rem;
+
+  --admin-radius: 4px;
+  --admin-radius-sm: 3px;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --admin-text-title: 2rem;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+  max-width: 100%;
+}
+
+/*
+  overflow-x:hidden lives on body ONLY, not html. Setting it on BOTH (as before) makes
+  each one independently establish its own scrolling box instead of html's overflow
+  propagating to the viewport as the spec intends — so the page ends up with two nested
+  scroll containers instead of one. position:sticky on .admin-sidebar then resolves
+  against body's own scroll box, not the true viewport, which is why it silently failed
+  to visually stick. Scoping this to body alone lets its overflow-x propagate up to
+  become the viewport's own overflow-x (per the CSS Overflow spec's propagation rule),
+  restoring a single, unambiguous scrolling root that sticky can correctly reference.
+*/
+body.admin-body {
+  max-width: 100%;
+  overflow-x: hidden;
+  min-height: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--admin-text-body);
+  line-height: 1.55;
+  color: var(--admin-text);
+  background: var(--admin-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--admin-focus-ring);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   TYPOGRAPHY UTILITIES
+   ========================================================================= */
+.admin-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--admin-text-label);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.admin-heading {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--admin-text-title);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--admin-text);
+}
+
+.admin-subheading {
+  margin-top: var(--space-2);
+  color: var(--admin-text-secondary);
+  margin-bottom: var(--space-6);
+  font-size: var(--admin-text-body);
+}
+
+.admin-subheading-strong {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-section);
+  color: var(--admin-text);
+  margin-bottom: var(--space-2);
+}
+
+.admin-hint {
+  font-size: var(--admin-text-helper);
+  color: var(--admin-text-muted);
+  margin-top: var(--space-1);
+  line-height: 1.5;
+}
+
+.admin-label,
+.admin-label-sm {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-text-secondary);
+}
+
+.admin-label {
+  font-size: var(--admin-text-label);
+}
+
+.admin-label-sm {
+  font-size: 0.625rem;
+  color: var(--admin-text-muted);
+}
+
+/* =========================================================================
+   BUTTONS — one consistent system: solid (primary), outline-dark (secondary),
+   danger, outline (only for dark surfaces, e.g. the topbar Logout button).
+   ========================================================================= */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--admin-radius);
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-helper);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.65em 1.1em;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.admin-btn-solid {
+  background: var(--admin-accent);
+  border-color: var(--admin-accent);
+  color: var(--admin-dark);
+}
+
+.admin-btn-solid:hover {
+  background: var(--admin-accent-dark);
+  border-color: var(--admin-accent-dark);
+}
+
+.admin-btn-outline-dark {
+  background: var(--admin-surface);
+  border-color: var(--admin-border-strong);
+  color: var(--admin-text);
+}
+
+.admin-btn-outline-dark:hover {
+  background: var(--admin-bg);
+  border-color: var(--admin-text-muted);
+}
+
+.admin-btn-danger {
+  background: var(--admin-surface);
+  border-color: var(--admin-danger);
+  color: var(--admin-danger);
+}
+
+.admin-btn-danger:hover {
+  background: var(--admin-danger-light);
+}
+
+/* Dark-surface variant — the topbar's Logout button is the only user of this. */
+.admin-btn-outline {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--color-white);
+}
+
+.admin-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-btn-sm {
+  padding: 0.45em 0.75em;
+  font-size: 0.6875rem;
+}
+
+.admin-form .admin-btn,
+.admin-auth-card .admin-btn {
+  margin-top: var(--space-2);
+  width: 100%;
+  padding: 0.8em 1.1em;
+}
+
+/* =========================================================================
+   FORM SYSTEM — light theme by default (correct for every usage except the
+   dark login card, which overrides explicitly further down).
+   ========================================================================= */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.admin-form-wide {
+  max-width: 760px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.admin-form > .admin-field:last-child,
+.admin-form-wide > .admin-field:last-child {
+  margin-bottom: 0;
+}
+
+.admin-input,
+.admin-textarea {
+  width: 100%;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: 0.7em 0.85em;
+  font-family: var(--font-sans);
+  font-size: var(--admin-text-body);
+  color: var(--admin-text);
+}
+
+.admin-input::placeholder,
+.admin-textarea::placeholder {
+  color: var(--admin-text-muted);
+}
+
+.admin-input:focus,
+.admin-textarea:focus {
+  outline: none;
+  border-color: var(--admin-accent-dark);
+  box-shadow: 0 0 0 3px rgba(185, 160, 106, 0.2);
+}
+
+.admin-textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.admin-field-error {
+  font-size: var(--admin-text-helper);
+  color: var(--admin-danger);
+  margin-top: var(--space-1);
+}
+
+.admin-checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.admin-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--admin-text-body);
+  color: var(--admin-text);
+}
+
+.admin-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--admin-accent-dark);
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .admin-form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-form-row-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.admin-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-image-preview {
+  margin-bottom: var(--space-2);
+}
+
+.admin-image-preview img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+}
+
+/* Read-only identity fields (Name/Slug on Edit Dining Venue) */
+.admin-readonly-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.admin-readonly-value {
+  padding: 0.7em 0.85em;
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  color: var(--admin-text);
+  font-family: var(--font-sans);
+  font-size: var(--admin-text-body);
+}
+
+/* =========================================================================
+   LOGIN SCREEN — the one dark-themed surface in Admin.
+   ========================================================================= */
+.admin-auth-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-dark);
+  padding: var(--space-4);
+}
+
+.admin-auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--admin-dark-surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--admin-radius);
+  padding: var(--space-6) var(--space-5);
+  color: var(--color-white);
+}
+
+.admin-auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.admin-auth-logo {
+  width: 64px;
+  height: auto;
+}
+
+.admin-auth-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--admin-accent);
+}
+
+.admin-auth-heading {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--color-white);
+  margin-bottom: var(--space-5);
+}
+
+.admin-auth-card .admin-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.admin-auth-card .admin-input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--color-white);
+}
+
+.admin-auth-card .admin-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-auth-card .admin-input:focus {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgba(185, 160, 106, 0.25);
+}
+
+/* =========================================================================
+   ALERTS / FLASH MESSAGES
+   ========================================================================= */
+.admin-alert {
+  background: var(--admin-danger-light);
+  border: 1px solid var(--admin-danger);
+  border-radius: var(--admin-radius);
+  color: #7a2f2d;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: var(--admin-text-helper);
+}
+
+.admin-alert p + p {
+  margin-top: var(--space-1);
+}
+
+.admin-flash {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--admin-text-helper);
+  text-align: center;
+  font-weight: 600;
+}
+
+.admin-flash-status {
+  background: var(--admin-success-light);
+  color: #345a3b;
+  border-bottom: 1px solid var(--admin-success);
+}
+
+.admin-flash-error {
+  background: var(--admin-danger-light);
+  color: var(--admin-danger);
+  border-bottom: 1px solid var(--admin-danger);
+}
+
+/* =========================================================================
+   SHELL LAYOUT — topbar + sidebar + main
+   ========================================================================= */
+.admin-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  background: var(--admin-dark);
+  color: var(--color-white);
+  padding: var(--space-3) var(--space-4);
+}
+
+.admin-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-topbar-logo {
+  width: 34px;
+  height: auto;
+}
+
+.admin-topbar-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.admin-topbar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-topbar-name {
+  font-size: var(--admin-text-helper);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-body-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-sidebar {
+  background: var(--admin-surface);
+  border-bottom: 1px solid var(--admin-border);
+  padding: var(--space-3) var(--space-4);
+}
+
+.admin-nav {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Section heading inside .admin-nav — deliberately NOT an .admin-nav-link (no href,
+   no hover/active affordance, smaller/muted type) so it can never be mistaken for a
+   clickable item, even though it lives in the same <ul> for layout purposes. */
+.admin-nav-group-label {
+  display: none;
+}
+
+.admin-nav-link {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-helper);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--admin-radius);
+  color: var(--admin-text-secondary);
+  border: 1px solid transparent;
+}
+
+a.admin-nav-link:hover {
+  color: var(--admin-text);
+  background: var(--admin-bg);
+}
+
+.admin-nav-link.is-active {
+  background: var(--admin-dark);
+  color: var(--color-white);
+}
+
+.admin-nav-link-disabled {
+  color: var(--admin-text-muted);
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ---- Dining dropdown (two fixed venues) — native <details>/<summary>, no JS ---- */
+.admin-nav-group-item {
+  flex: 1 1 100%;
+}
+
+.admin-nav-group summary.admin-nav-link {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.admin-nav-group summary.admin-nav-link::-webkit-details-marker {
+  display: none;
+}
+
+.admin-nav-group summary.admin-nav-link::after {
+  content: "\25BE";
+  font-size: 0.625rem;
+  transition: transform 150ms ease;
+}
+
+.admin-nav-group[open] summary.admin-nav-link::after {
+  transform: rotate(180deg);
+}
+
+.admin-nav-sub {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  padding-left: var(--space-3);
+}
+
+.admin-nav-sublink {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-helper);
+  letter-spacing: 0.02em;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--admin-radius);
+  color: var(--admin-text-secondary);
+  border: 1px solid transparent;
+}
+
+a.admin-nav-sublink:hover {
+  color: var(--admin-text);
+  background: var(--admin-bg);
+}
+
+.admin-nav-sublink.is-active {
+  background: var(--admin-dark);
+  color: var(--color-white);
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+  max-width: 1040px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  /* .admin-topbar and .admin-body-grid are siblings inside .admin-shell (a column flex),
+     not nested one inside the other — so making the topbar sticky doesn't automatically
+     reserve space for it above the sidebar. Without offsetting the sidebar below, both
+     would independently stick to top:0 and visually overlap at the top of the viewport. */
+  .admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .admin-body-grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .admin-sidebar {
+    width: 232px;
+    flex-shrink: 0;
+    /* position:sticky here needed body's overflow-x:hidden ungrouped from html (see the
+       body.admin-body rule near the top of this file) — previously both had it
+       independently, which broke sticky's viewport reference. align-items:flex-start on
+       .admin-body-grid (above) is also required — flex's default `stretch` would force
+       the sidebar to match content height, leaving no room to detach and stick.
+       top/height account for the sticky topbar's own ~61px (the same figure this
+       sidebar's height was already computed against before it became sticky) so the two
+       stack instead of overlapping once both are pinned. */
+    position: sticky;
+    top: 61px;
+    height: calc(100vh - 61px);
+    overflow-y: auto;
+    border-bottom: none;
+    border-right: 1px solid var(--admin-border);
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .admin-nav {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .admin-nav-link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .admin-nav-group-label {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--admin-text-muted);
+    padding: var(--space-4) var(--space-3) var(--space-1);
+    cursor: default;
+  }
+
+  .admin-nav-group-label:first-child {
+    padding-top: 0;
+  }
+
+  .admin-nav-divider {
+    border: none;
+    border-top: 1px solid var(--admin-border);
+    margin: var(--space-4) var(--space-3);
+  }
+
+  .admin-sidebar-foot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+/* =========================================================================
+   DASHBOARD
+   ========================================================================= */
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.admin-stat-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: var(--space-4);
+}
+
+.admin-stat-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.admin-stat-value {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--admin-text-stat);
+  color: var(--admin-text);
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .admin-stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .admin-stat-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* =========================================================================
+   PAGE HEADER — list pages (Rooms/Activities/Dining index, Edit Dining Venue)
+   ========================================================================= */
+.admin-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+/* =========================================================================
+   TABLE SYSTEM — one real <table> pattern (index pages) + one row-based
+   pattern (.admin-item-table, for image/item management on Edit pages, which
+   needs a per-row <form> that a literal <table> can't validly contain).
+   Both scroll horizontally within their own container only — never the page.
+   ========================================================================= */
+.admin-table-wrap {
+  /* overflow:hidden (not just overflow-x:auto) is required so the wrapper's own
+     border-radius actually clips the table's square corners — without it, the header
+     row's background color squares off past the rounded corner, reading as a "broken"
+     border where the two meet. */
+  overflow: hidden;
+  overflow-x: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-surface);
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: var(--admin-text-table);
+  /* text-align is inherited, not redeclared per-cell below — a value set directly on a
+     <td>/<th> (e.g. .admin-table-center/.admin-table-right) always wins over an inherited
+     one regardless of specificity math, so utility classes can never lose this fight. A
+     same-specificity-class-vs-class-plus-type rule here previously made .admin-table-
+     center/.admin-table-right silently lose to a competing ".admin-table td" rule — Price/
+     Guests/Status were never actually centered despite the class being applied. */
+  text-align: left;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--admin-border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Headers are always centered; body cells inherit left from .admin-table above (correct
+   for the common case — names/descriptions/free text) and opt into .admin-table-center /
+   .admin-table-right per column as needed. */
+.admin-table th {
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+  background: var(--admin-bg);
+}
+
+.admin-table-center {
+  text-align: center;
+}
+
+.admin-table-right {
+  text-align: right;
+}
+
+/* Fixed-width columns (photo/status/order/actions) — table-layout stays auto, so these
+   only need to be declared once on <th>; the browser applies the same width to every
+   <td> in that column, keeping header and body columns aligned by construction. */
+.admin-table-col-xs {
+  width: 64px;
+}
+
+.admin-table-col-sm {
+  width: 96px;
+}
+
+.admin-table-col-md {
+  width: 140px;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+  background: var(--admin-bg);
+}
+
+.admin-table-thumb {
+  /* display:block is required here, not just on <img> (the base reset only targets img)
+     — the Activities empty-photo placeholder reuses this class on a <span>, which is
+     inline by default and would otherwise ignore width/height entirely, rendering at
+     text size instead of the intended thumbnail box. margin auto centers the fixed-width
+     box inside a centered <td> since text-align alone can't center a block element. */
+  display: block;
+  width: 52px;
+  height: 40px;
+  margin: 0 auto;
+  object-fit: cover;
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-bg);
+}
+
+/* Scoped as .admin-table td.admin-table-name-cell (not just .admin-table-name-cell) so
+   its specificity (class+type+class) beats the base ".admin-table td { white-space:
+   nowrap }" rule above (class+type) — the un-scoped version used to lose that cascade
+   fight silently, so the wrap never actually applied and long text (e.g. Bedding) visibly
+   overlapped the next column. */
+.admin-table td.admin-table-name-cell {
+  white-space: normal;
+  max-width: 260px;
+}
+
+/* Any other free-text column long enough to need wrapping instead of forcing the
+   column (and the whole table) wider — e.g. Rooms' Bedding text. */
+.admin-table td.admin-table-wrap-cell {
+  white-space: normal;
+  max-width: 220px;
+}
+
+.admin-table-name {
+  font-weight: 600;
+  color: var(--admin-text);
+}
+
+.admin-table-subtext {
+  display: block;
+  font-size: var(--admin-text-helper);
+  color: var(--admin-text-muted);
+  font-weight: 400;
+  white-space: normal;
+  margin-top: 2px;
+}
+
+.admin-table-venue-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-table-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px var(--space-2);
+  border-radius: 999px;
+  margin-left: var(--space-2);
+}
+
+/* A Status badge is the sole content of its (centered) cell — the margin-left above is
+   only meant to space a badge that follows inline text (e.g. name + "Featured"). */
+.admin-table-center .admin-badge {
+  margin-left: 0;
+}
+
+.admin-badge-muted {
+  background: var(--admin-bg);
+  color: var(--admin-text-muted);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-badge-success {
+  background: var(--admin-success-light);
+  color: var(--admin-success);
+}
+
+.admin-badge-accent {
+  background: var(--admin-accent-light);
+  color: #7a6636;
+}
+
+.admin-empty {
+  color: var(--admin-text-muted);
+  font-size: var(--admin-text-body);
+  padding: var(--space-6) var(--space-3);
+  text-align: center;
+}
+
+.admin-empty-cta {
+  display: inline-block;
+  margin-top: var(--space-3);
+}
+
+/* ---- Row-based "table" (image/item management on Edit pages) ---- */
+.admin-item-table {
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-surface);
+  margin-bottom: var(--space-4);
+  overflow: hidden;
+}
+
+.admin-item-row-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--admin-bg);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--admin-text-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+}
+
+/* Every header label is centered (matching .admin-table th) regardless of variant. */
+.admin-item-row-header span {
+  text-align: center;
+}
+
+/* Column-width tokens shared by every variant of this row-based table (5-column
+   galleries/items, or the 2-column photo-only galleries) — applied to both the header
+   <span> and, where a real body counterpart exists, mirrored on that element, so the two
+   independent flex rows close their column boundaries at the same points. True per-pixel
+   table alignment isn't achievable here (Name/Description/Sort/Save live one flex level
+   deeper, nested inside a single <form> for submission, not as direct siblings of Photo/
+   Actions) without restructuring that form's markup, which is out of scope for a UI-only
+   change — this gets header and body as close as CSS can without touching functional
+   markup. */
+.admin-item-col-photo {
+  flex: 0 0 56px;
+}
+
+.admin-item-col-text {
+  flex: 1 1 120px;
+  min-width: 120px;
+}
+
+.admin-item-col-sort {
+  flex: 0 0 64px;
+}
+
+.admin-item-col-actions {
+  flex: 0 0 140px;
+}
+
+.admin-item-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--admin-border);
+  flex-wrap: wrap;
+}
+
+.admin-item-row-thumb {
+  /* display:block is required, not just on <img> (the base reset only targets img) —
+     the empty-photo placeholder for items reuses this class on a <span>, which is inline
+     by default and would otherwise ignore width/height entirely. Same bug class already
+     fixed on .admin-table-thumb. */
+  display: block;
+  width: 56px;
+  height: 42px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: var(--admin-radius-sm);
+  background: var(--admin-bg);
+}
+
+.admin-item-row-form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex: 1;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.admin-item-row-form .admin-input-sm {
+  flex: 1;
+  min-width: 120px;
+}
+
+.admin-input-sm {
+  padding: 0.45em 0.6em;
+  font-size: var(--admin-text-table);
+}
+
+.admin-input-order {
+  flex: 0 0 64px !important;
+  min-width: 0 !important;
+  text-align: center;
+}
+
+/* ---- Menu Highlights / Food Strip — CSS Grid variant of the row-based table above ----
+   Scoped to .admin-item-table-grid only (used exclusively by
+   _gallery-group-table.blade.php AND _items-table.blade.php's Signature Cocktails), so
+   the plain photo-only galleries (_gallery-photo-only-table.blade.php) — which still use
+   the original flex .admin-item-row system unmodified — are unaffected.
+
+   True column alignment wasn't achievable with the flex version: Name/Description/Sort
+   lived one flex level deeper than Photo/Actions (nested inside a single <form>, needed
+   for one-shot submission), so two independent flex rows could only ever approximate
+   matching widths, never guarantee them — this is the same guarantee gap a literal
+   <table> doesn't have (browsers force every <td> in a column to share one width). Grid
+   closes that gap: Name/Description/Sort/Save/Choose File/Delete land in real grid
+   columns shared with the header, via display:contents on their owning <form> (still
+   used by Signature Cocktails, whose fields are still nested inside the form) — each
+   <form> still exists and submits exactly as before (CSRF, @method spoofing, action
+   URLs, Choose-File-submits-immediately unchanged); only *where in the DOM* the controls
+   visually sit has changed. */
+.admin-item-table.admin-item-table-grid {
+  overflow-x: auto;
+}
+
+.admin-item-table-grid .admin-item-row-header,
+.admin-item-table-grid .admin-item-row {
+  display: grid;
+  grid-template-columns: 56px minmax(120px, 1fr) minmax(160px, 1.4fr) 64px minmax(260px, auto);
+}
+
+.admin-item-table-grid .admin-item-row-form,
+.admin-item-table-grid .admin-item-row-delete-shell {
+  display: contents;
+}
+
+/* Menu Highlights only (.admin-item-table-actions-stack — see below) restructured its
+   markup so every field is already a flat, direct child of .admin-item-row (tied to its
+   <form> via `form="id"` instead of DOM nesting), so its two <form> elements now hold
+   nothing but hidden CSRF/method-spoof inputs. display:contents on an empty <form> would
+   still be fine, but display:none is used instead — form elements have had inconsistent
+   display:contents support across some browsers, which is what caused Save to visibly
+   render as its own extra column here previously. Signature Cocktails still needs
+   display:contents (rule above) since its Name/Description/Sort inputs are still nested
+   inside the form as real visible content that needs promoting into the grid. */
+.admin-item-table-actions-stack .admin-item-row-form,
+.admin-item-table-actions-stack .admin-item-row-delete-shell {
+  display: none;
+}
+
+/* Actions cell: Choose File on the left (flexible width), Save stacked above Delete on
+   the right (fixed, doesn't shrink) — used by both Menu Highlights and Signature
+   Cocktails. The header label above still spans and centers over this whole column
+   (.admin-item-col-actions, unchanged) since it represents the column as a whole, not
+   the position of any one control inside it. */
+.admin-item-table-grid .admin-item-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.admin-item-table-grid .admin-item-row-file {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-item-table-grid .admin-item-row-file .admin-file-input-sm {
+  width: 100%;
+  max-width: none;
+}
+
+.admin-item-table-grid .admin-item-row-save-delete {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* Rate Plans: same flattened-DOM/form="id" technique as Menu Highlights above, but no
+   photo column and more fields (no image at all — rate plans are text/number only). */
+.admin-item-table-rate-plans .admin-item-row-header,
+.admin-item-table-rate-plans .admin-item-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.2fr) 90px 110px 110px minmax(140px, 1fr) 90px 80px 64px minmax(160px, auto);
+  align-items: center;
+}
+
+.admin-item-table-rate-plans .admin-item-row-form,
+.admin-item-table-rate-plans .admin-item-row-delete-shell {
+  display: none;
+}
+
+.admin-item-table-rate-plans .admin-item-row-checkbox {
+  display: flex;
+  justify-content: center;
+}
+
+.admin-file-input-sm {
+  flex: 0 0 auto;
+  max-width: 160px;
+  font-size: 0.6875rem;
+  color: var(--admin-text-muted);
+}
+
+/* =========================================================================
+   IMAGE MANAGEMENT SECTIONS (heading + hint above each table)
+   ========================================================================= */
+.admin-room-images {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--admin-border);
+  max-width: 760px;
+}
+
+.admin-image-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+
+@media (min-width: 640px) {
+  .admin-image-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.admin-image-card {
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--admin-surface);
+}
+
+.admin-image-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--admin-radius-sm);
+}
+
+.admin-image-card-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.admin-upload-form {
+  background: var(--admin-accent-light);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.admin-upload-form .admin-label {
+  color: var(--admin-text-secondary);
+}
+
+/* ---- Venue identity block (Edit Dining Venue) ---- */
+.admin-venue-identity {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-venue-identity .admin-subheading-strong {
+  margin-bottom: var(--space-1);
+}
+
+.admin-venue-identity > .admin-hint {
+  margin-bottom: var(--space-4);
+}

@@ -1,0 +1,77 @@
+/*
+  Design tokens — ported verbatim from the Next.js reference project's
+  src/styles/tokens.css (values sourced from that project's CLAUDE.md §3/§4/§5/§10).
+
+  Breakpoints are documented here as reference only — CSS custom properties cannot be
+  used inside @media conditions, so every component's media queries hardcode these same
+  pixel values:
+    --bp-mobile:  480px
+    --bp-tablet:  768px
+    --bp-laptop:  1024px
+    --bp-desktop: 1280px
+*/
+
+:root {
+  /* ---- Color ---- */
+  --color-bg: #ffffff;
+  --color-footer-bg: #0a0a0a;
+  --color-cream: #f4efe6;
+  --color-text-heading: #262421;
+  --color-text-body: #6e6b66;
+  --color-accent-tan: #c2a46b;
+  --color-accent-tan-dark: #b9a06a;
+  --color-rule: #a8a49c;
+  --color-white: #ffffff;
+  --color-error: #b94a48;
+  --overlay-dark-soft: rgba(0, 0, 0, 0.3);
+  --overlay-dark-strong: rgba(0, 0, 0, 0.5);
+
+  /* ---- Typography ---- */
+  /* Elsie -> heading/display, Inter -> body/UI. Loaded via Google Fonts <link> in
+     layouts/app.blade.php. Only a generic CSS fallback keyword after the real font. */
+  --font-serif: "Elsie", serif;
+  --font-sans: "Inter", sans-serif;
+
+  --text-hero: clamp(2.25rem, 5vw, 4.25rem);
+  --text-h1: clamp(1.75rem, 3.2vw, 2.75rem);
+  --text-h2: clamp(1.375rem, 2.4vw, 1.875rem);
+  --text-body: 1rem;
+  --text-small: 0.9375rem;
+  --text-label: 0.75rem;
+
+  --tracking-hero: 0.05em;
+  --tracking-heading: 0.02em;
+  --tracking-label: 0.15em;
+  --tracking-nav: 0.1em;
+
+  --line-height-heading: 1.2;
+  --line-height-body: 1.7;
+
+  /* ---- Spacing ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+  --space-9: 120px;
+
+  /* ---- Layout ---- */
+  --container-max: 1280px;
+  --container-padding: 24px;
+
+  /* ---- Buttons / borders (sharp corners, no shadows) ---- */
+  --radius: 0px;
+  --border-width: 1px;
+  --shadow: none;
+  --transition-fast: 150ms ease;
+
+  /* ---- Motion (scroll-reveal system, resources/js/app.js) ---- */
+  --motion-duration: 700ms;
+  --motion-duration-image: 900ms;
+  --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-distance: 20px;
+  --motion-stagger-step: 80ms;
+}

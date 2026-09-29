@@ -1,0 +1,67 @@
+.feature-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--space-6) var(--container-padding);
+  align-items: center;
+}
+
+.feature-block-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.feature-block-image-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2 / 1;
+  background: repeating-linear-gradient(45deg, #e9e4d8, #e9e4d8 10px, #ddd6c4 10px, #ddd6c4 20px);
+}
+
+.feature-block-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .feature-block {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .feature-block-reverse {
+    direction: rtl;
+  }
+
+  .feature-block-reverse > * {
+    direction: ltr;
+  }
+}
+
+/* Overlap variant (Spa page) — the text becomes a cream card floating partially over the
+   image's edge instead of sitting cleanly beside it. Used sparingly, as a deliberate accent. */
+.feature-block-overlap {
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .feature-block-overlap .feature-block-card {
+    position: relative;
+    z-index: 1;
+    background: var(--color-cream);
+    padding: var(--space-5);
+    margin-right: -14%;
+  }
+
+  .feature-block-overlap-image-left .feature-block-image-wrap {
+    order: -1;
+  }
+
+  .feature-block-overlap-image-left .feature-block-card {
+    margin-right: 0;
+    margin-left: -14%;
+  }
+}

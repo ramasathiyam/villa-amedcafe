@@ -14,8 +14,7 @@
         :heading="$page->intro_heading"
         :body="$page->intro_body"
         link-label="Book Now"
-        :link-disabled="true"
-        link-disabled-reason="Booking flow not defined yet"
+        :link-href="route('room')"
     />
 
     {{-- Reference shows this exact eyebrow/heading/paragraph twice (once per FeatureBlock)

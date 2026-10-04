@@ -61,6 +61,25 @@ class Activity extends Model
             'name' => $this->name,
             'description' => $this->description,
             'image' => $this->image,
+            'linkUrl' => $this->activityPageUrl(),
         ];
+    }
+
+    /**
+     * Where a Home card's title/image should link: the anchor for this activity's card on
+     * the Activity page ("Exceptional Experiences" grid) if it actually appears there,
+     * otherwise the plain Activity page URL — never a hash with no matching id. Reads only
+     * already-loaded attributes (no query), and the anchor id (`activity-{slug}`) must
+     * match the id activity/index.blade.php renders on that same row.
+     */
+    public function activityPageUrl(): string
+    {
+        $activityUrl = route('activity');
+
+        if ($this->is_active && $this->show_on_activity_page) {
+            return $activityUrl.'#activity-'.$this->slug;
+        }
+
+        return $activityUrl;
     }
 }

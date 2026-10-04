@@ -23,8 +23,7 @@
         :heading="$page->intro_heading"
         :body="$page->intro_body"
         link-label="Book Now"
-        :link-disabled="true"
-        link-disabled-reason="Booking flow not defined yet"
+        :link-href="route('room')"
     />
 
     <x-sections.gallery-strip

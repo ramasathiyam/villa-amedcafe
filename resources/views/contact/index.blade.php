@@ -40,8 +40,7 @@
         heading="Contact Us"
         body="Nestled in the tranquil village of Amed, Kebun Wayan is a charming café and hotel surrounded by tropical gardens, offering a peaceful escape with the authentic beauty of Bali."
         link-label="Book Now"
-        :link-disabled="true"
-        link-disabled-reason="Booking flow not defined yet"
+        :link-href="route('room')"
     />
 
     <x-sections.contact-section

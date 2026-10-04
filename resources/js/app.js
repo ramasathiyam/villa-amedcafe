@@ -117,31 +117,80 @@ function initCardGrids() {
     if (!track) return;
 
     let dragging = false;
+    let dragMoved = false;
+    let pointerCaptured = false;
+    let activePointerId = null;
     let startX = 0;
+    let startY = 0;
     let startScrollLeft = 0;
+    // Below this many px of pointer movement, treat it as a click/tap, not a drag —
+    // cards now contain real links (title/image), so a drag that crosses this threshold
+    // must not also fire navigation.
+    const DRAG_CLICK_THRESHOLD = 6;
 
     track.addEventListener("pointerdown", (event) => {
       dragging = true;
+      dragMoved = false;
+      pointerCaptured = false;
+      activePointerId = event.pointerId;
       startX = event.clientX;
+      startY = event.clientY;
       startScrollLeft = track.scrollLeft;
-      track.setPointerCapture(event.pointerId);
       track.classList.add("is-dragging");
+      // Deliberately NOT calling setPointerCapture here. Capturing on pointerdown reroutes
+      // the click that follows to the capturing element (track) instead of the actual <a>
+      // under the pointer, which silently swallows every plain click/tap — capture is only
+      // taken below, once movement past the threshold confirms this is really a drag.
     });
     track.addEventListener("pointermove", (event) => {
       if (!dragging) return;
-      track.scrollLeft = startScrollLeft - (event.clientX - startX);
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      if (!dragMoved && Math.hypot(dx, dy) > DRAG_CLICK_THRESHOLD) {
+        dragMoved = true;
+        try {
+          track.setPointerCapture(activePointerId);
+          pointerCaptured = true;
+        } catch {
+          // pointer already gone
+        }
+      }
+      if (dragMoved) {
+        track.scrollLeft = startScrollLeft - dx;
+      }
     });
     function endDrag(event) {
       dragging = false;
       track.classList.remove("is-dragging");
-      try {
-        track.releasePointerCapture(event.pointerId);
-      } catch {
-        // pointer already released
+      if (pointerCaptured) {
+        try {
+          track.releasePointerCapture(event.pointerId);
+        } catch {
+          // pointer already released
+        }
+        pointerCaptured = false;
       }
     }
     track.addEventListener("pointerup", endDrag);
     track.addEventListener("pointercancel", endDrag);
+
+    // Capture phase so this runs before a card link's own navigation — suppresses the
+    // click/tap that can follow a real drag/swipe (touch in particular still synthesizes
+    // one), without touching the scroll logic above. Always clears dragMoved afterward
+    // (not only when it was true) so a drag that ends without ever producing a click can't
+    // leave it set and swallow the next, unrelated click. Arrows/dots are outside the
+    // linked cards entirely, so they're unaffected.
+    track.addEventListener(
+      "click",
+      (event) => {
+        if (dragMoved) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        dragMoved = false;
+      },
+      true
+    );
 
     if (!dotsWrap) return;
     const dots = Array.from(dotsWrap.querySelectorAll("[data-dot-index]"));

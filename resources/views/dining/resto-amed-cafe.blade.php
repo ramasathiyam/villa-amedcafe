@@ -40,8 +40,7 @@
         heading="Amed Café & Hotel Kebun Wayan"
         :body="$hotelBlurb"
         link-label="Discover More"
-        :link-disabled="true"
-        link-disabled-reason="No About page built yet"
+        :link-href="route('activity')"
         image-side="left"
         :image="['src' => $featureImages->get(0)?->image, 'alt' => $featureImages->get(0)?->alt_text ?: $venue->name]"
     />
@@ -51,8 +50,7 @@
         heading="Amed Café & Hotel Kebun Wayan"
         :body="$hotelBlurb"
         link-label="Discover More"
-        :link-disabled="true"
-        link-disabled-reason="No About page built yet"
+        :link-href="route('activity')"
         image-side="right"
         :image="['src' => $featureImages->get(1)?->image, 'alt' => $featureImages->get(1)?->alt_text ?: $venue->name]"
     />

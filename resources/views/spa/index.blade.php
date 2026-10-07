@@ -26,8 +26,7 @@
         heading="Amed Café & Hotel Kebun Wayan"
         body="Amed Café & Hotel Kebun Wayan is a heritage beachfront hotel located on Jemeluk Beach, Amed, Karangasem. As one of the oldest and most respected accommodations in Amed, it offers a unique charm that blends Balinese tradition, oceanfront relaxation, and community warmth."
         link-label="Discover More"
-        :link-disabled="true"
-        link-disabled-reason="No About page built yet"
+        :link-href="route('activity')"
         image-side="right"
         :image="['src' => '/images/spa/spa-treatment.png', 'alt' => 'Guest receiving a shoulder massage at the spa']"
     />
@@ -38,8 +37,7 @@
         heading="Amed Café & Hotel Kebun Wayan"
         body="Amed Café & Hotel Kebun Wayan is a heritage beachfront hotel located on Jemeluk Beach, Amed, Karangasem. As one of the oldest and most respected accommodations in Amed, it offers a unique charm that blends Balinese tradition, oceanfront relaxation, and community warmth."
         link-label="Discover More"
-        :link-disabled="true"
-        link-disabled-reason="No About page built yet"
+        :link-href="route('activity')"
         image-side="left"
         :image="['src' => '/images/spa/spa-treatment.png', 'alt' => 'Guest receiving a shoulder massage at the spa']"
     />

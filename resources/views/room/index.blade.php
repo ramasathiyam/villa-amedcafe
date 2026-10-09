@@ -92,7 +92,6 @@
 
                 <div class="room-family-meta">
                     <p class="room-family-meta-item">Max {{ $featuredRoom->max_guests }} {{ \Illuminate\Support\Str::plural('guest', $featuredRoom->max_guests) }} per room</p>
-                    <p class="room-family-meta-item">Include: Breakfast</p>
                     <p class="room-family-meta-item">Room Size: {{ $featuredRoom->size_sqm }} m²</p>
                     <p class="room-family-meta-item">Bedding: {{ $featuredRoom->bedding }}</p>
                 </div>
@@ -126,7 +125,7 @@
                         :agoda-logo-path="$agodaLogoPath"
                         row-class="room-family-ota-row"
                     />
-                    <x-ui.rule-link :href="$featuredRoomDetailUrl">More Information</x-ui.rule-link>
+                    <x-ui.rule-link :href="$featuredRoomDetailUrl" aria-label="More information about {{ $featuredRoom->name }}">More Information</x-ui.rule-link>
                 </div>
             </div>
         </div>

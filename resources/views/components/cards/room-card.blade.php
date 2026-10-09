@@ -47,9 +47,7 @@
         <p class="room-card-meta">Max {{ $room['maxGuests'] }} {{ \Illuminate\Support\Str::plural('guest', $room['maxGuests']) }} per room</p>
         <p class="room-card-meta">Room Size: {{ $room['sizeSqm'] }} m²</p>
         <p class="room-card-meta">Bedding: {{ $room['bedding'] }}</p>
-        @if (!empty($room['includesBreakfast']))
-            <p class="room-card-meta">Includes Breakfast</p>
-        @endif
+        <x-ui.rule-link :href="$detailUrl" aria-label="More information about {{ $room['name'] }}">More Information</x-ui.rule-link>
 
         @if (!empty($room['minUnitsNeeded']))
             <p class="room-card-capacity-hint">
